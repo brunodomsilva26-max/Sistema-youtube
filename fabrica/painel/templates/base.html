@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ canal.nome }} · Fábrica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='estilo.css') }}">
+</head>
+<body>
+<aside class="lateral">
+  <div class="marca"><span class="logo">IA</span><b>{{ canal.nome }}</b></div>
+  <nav>
+    <a href="{{ url_for('aprovacao') }}" class="{{ 'ativo' if aba=='aprovacao' }}">✅ Aprovação</a>
+    <a href="{{ url_for('fabrica') }}" class="{{ 'ativo' if aba=='fabrica' }}">🏭 Fábrica</a>
+    <a href="{{ url_for('agenda') }}" class="{{ 'ativo' if aba=='agenda' }}">🗓️ Agenda</a>
+  </nav>
+  <form method="post" action="{{ url_for('acao_pautas') }}" class="nova-pauta">
+    <label>Nova pauta</label>
+    <input name="tema" placeholder="Tema do vídeo (opcional)">
+    <input type="hidden" name="n" value="3">
+    <button class="btn amarelo">➕ Adicionar / sugerir 3</button>
+    <small>Vazio = o agente de pauta sugere sozinho.</small>
+  </form>
+</aside>
+<main>
+  {% with msgs = get_flashed_messages() %}
+    {% for m in msgs %}<div class="aviso">{{ m }}</div>{% endfor %}
+  {% endwith %}
+  {% block conteudo %}{% endblock %}
+</main>
+</body>
+</html>

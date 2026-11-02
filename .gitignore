@@ -1,0 +1,7 @@
+.env
+credenciais/
+projetos/
+__pycache__/
+*.pyc
+.venv/
+*.whl

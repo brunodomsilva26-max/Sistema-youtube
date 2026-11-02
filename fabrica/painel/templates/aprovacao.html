@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block conteudo %}
+<h1>Aprovação <small>tudo o que precisa do seu OK</small></h1>
+
+<section class="kpis">
+  <div class="kpi amarelo"><b>{{ c['aguardando_aprovacao'] }}</b><span>aguardando você</span></div>
+  <div class="kpi verde"><b>{{ c['agendado'] }}</b><span>agendados no YouTube</span></div>
+  <div class="kpi azul"><b>{{ c['na_fila'] + c['produzindo'] + c['alteracao_solicitada'] }}</b><span>na fábrica</span></div>
+  <div class="kpi vermelho"><b>{{ c['erro'] }}</b><span>com erro</span></div>
+</section>
+
+<h2>Fila de aprovação <small>vídeos longos + shorts prontos para revisar</small></h2>
+{% if not fila %}<p class="vazio">Nada para aprovar agora. A fábrica está trabalhando ☕</p>{% endif %}
+<div class="grade">
+  {% for p in fila %}
+  <a class="card" href="{{ url_for('projeto', pid=p.id) }}">
+    <div class="capa"><img src="{{ url_for('midia', pid=p.id, arquivo='thumbnail.jpg', v=p.get('atualizado_em')) }}" alt=""><span class="play">▶</span></div>
+    <div class="info">
+      <b>{{ titulo(p) }}</b>
+      <small>{{ (p.roteiro.blocos|length) }} cenas · {{ (p.get('shorts_gerados') or [])|length }} shorts</small>
+      <div class="barras">{% for e in ETAPAS %}<i class="ok"></i>{% endfor %}</div>
+    </div>
+    <div class="acoes-card"><span class="btn amarelo">✓ Revisar e aprovar</span></div>
+  </a>
+  {% endfor %}
+</div>
+
+{% if em_producao %}
+<h2>Na fábrica</h2>
+<table class="tabela">
+  <tr><th>Vídeo</th><th>Status</th><th>Etapas</th></tr>
+  {% for p in em_producao %}
+  <tr>
+    <td>{{ titulo(p) }}</td>
+    <td><span class="tag t-{{ p.status }}">{{ ROTULOS[p.status] }}</span></td>
+    <td class="etapas">{% for e in ETAPAS %}<span class="et et-{{ p['etapas'][e].status }}" title="{{ e }} {{ p['etapas'][e].detalhe }}">{{ e[:4] }}</span>{% endfor %}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endif %}
+
+{% if erros %}
+<h2>Com erro</h2>
+<table class="tabela">
+  {% for p in erros %}
+  <tr>
+    <td>{{ titulo(p) }}<br><small class="erro">{{ p.get('erro') }}</small></td>
+    <td><form method="post" action="{{ url_for('acao_retomar', pid=p.id) }}"><button class="btn">🔁 Tentar de novo</button></form></td>
+    <td><a class="btn" href="{{ url_for('projeto', pid=p.id) }}">Abrir</a></td>
+  </tr>
+  {% endfor %}
+</table>
+{% endif %}
+<script>setTimeout(()=>location.reload(), 15000)</script>
+{% endblock %}

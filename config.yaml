@@ -1,0 +1,65 @@
+# ============================================================
+#  FÁBRICA DE CANAL DARK — configuração do canal
+#  Edite este arquivo para adaptar a fábrica ao SEU nicho.
+# ============================================================
+
+canal:
+  nome: "Mistérios Sem Resposta"
+  nicho: "mistérios históricos, casos não resolvidos e curiosidades sombrias"
+  publico: "adultos brasileiros de 18 a 45 anos que gostam de histórias intrigantes"
+  idioma: "pt-BR"
+  tom: "narrativo, envolvente, com suspense; frases curtas; ganchos a cada 30 segundos"
+  duracao_minutos: 8          # duração-alvo do vídeo longo
+  quantidade_shorts: 3        # shorts extraídos de cada vídeo
+  # Instruções extras para o roteirista (estilo, bordões, CTA etc.)
+  instrucoes_extras: >
+    Comece com um gancho forte nos primeiros 5 segundos. Nunca diga "olá pessoal".
+    Termine pedindo para o espectador se inscrever e comentar a teoria dele.
+
+# ---------- Provedores (troque conforme suas chaves) ----------
+llm:
+  provedor: "anthropic"       # anthropic | claude_code | demo
+  modelo: "claude-opus-5-5"
+  esforco: "medium"           # low | medium | high
+
+voz:
+  provedor: "edge"            # edge (grátis) | elevenlabs | demo
+  edge_voz: "pt-BR-AntonioNeural"
+  edge_velocidade: "+5%"
+  elevenlabs_voice_id: ""     # ex: "pNInz6obpgDQGcFmaJgB"
+  elevenlabs_modelo: "eleven_multilingual_v2"
+
+imagens:
+  provedor: "pollinations"    # pollinations (grátis) | openai | demo
+  estilo: "cinematic dark illustration, dramatic lighting, high detail, moody atmosphere, 16:9"
+  openai_modelo: "gpt-image-1"
+
+video:
+  legendas: true
+  musica_fundo: ""            # caminho de um .mp3 sem copyright (opcional)
+  volume_musica: 0.10
+  fonte: "/usr/share/fonts/opentype/inter/Inter-ExtraBold.otf"
+
+thumbnail:
+  cor_destaque: "#FFD400"     # amarelo
+  cor_texto: "#FFFFFF"
+
+# ---------- Publicação no YouTube ----------
+youtube:
+  modo: "simulado"            # simulado (não envia nada) | real (API oficial)
+  client_secret: "credenciais/client_secret.json"
+  token: "credenciais/token.json"
+  categoria_id: "27"          # 27 = Educação, 24 = Entretenimento
+  idioma_audio: "pt-BR"
+  conteudo_sintetico: true    # declara uso de IA (exigência do YouTube)
+
+agenda:
+  fuso: "America/Sao_Paulo"
+  # dias: 0=seg ... 6=dom
+  dias_videos: [0, 2, 4]
+  horario_videos: "18:00"
+  horarios_shorts: ["12:00", "20:00"]
+
+fabrica:
+  pasta_projetos: "projetos"
+  intervalo_worker_segundos: 5

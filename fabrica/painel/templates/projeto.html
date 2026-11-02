@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block conteudo %}
+{% set r = p.roteiro or {} %}
+<a href="{{ url_for('aprovacao') }}" class="voltar">← voltar</a>
+<h1>{{ titulo(p) }} <span class="tag t-{{ p.status }}">{{ ROTULOS[p.status] }}</span></h1>
+{% if p.get('erro') %}<div class="aviso erro">{{ p.get('erro') }}</div>{% endif %}
+
+<div class="duas-colunas">
+  <div>
+    {% if p['etapas']['montagem'].status == 'ok' %}
+    <video controls preload="metadata" poster="{{ url_for('midia', pid=p.id, arquivo='thumbnail.jpg', v=p.get('atualizado_em')) }}"
+           src="{{ url_for('midia', pid=p.id, arquivo='video.mp4', v=p.get('atualizado_em')) }}"></video>
+    {% endif %}
+
+    {% if p.get('shorts_gerados') %}
+    <h2>Shorts</h2>
+    <div class="shorts">
+      {% for s in p.get('shorts_gerados') %}
+      <figure><video controls preload="metadata" src="{{ url_for('midia', pid=p.id, arquivo=s.arquivo, v=p.get('atualizado_em')) }}"></video>
+        <figcaption>{{ s.titulo }} <small>{{ s.duracao }}s</small></figcaption></figure>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if r %}
+    <h2>Roteiro</h2>
+    <details class="roteiro"><summary>Ver os {{ r.blocos|length }} blocos</summary>
+      {% for b in r.blocos %}<p><b>{{ loop.index }}.</b> {{ b.narracao }}<br><small>🎨 {{ b.cena }}</small></p>{% endfor %}
+    </details>
+    {% endif %}
+  </div>
+
+  <div class="painel-lateral">
+    {% if p['etapas']['thumbnail'].status == 'ok' %}
+    <img class="thumb" src="{{ url_for('midia', pid=p.id, arquivo='thumbnail.jpg', v=p.get('atualizado_em')) }}" alt="thumbnail">
+    {% endif %}
+    {% if r %}
+    <h3>Descrição</h3><pre class="desc">{{ r.descricao }}</pre>
+    <p class="tags">{% for t in r.tags %}<span>#{{ t }}</span>{% endfor %}</p>
+    {% endif %}
+
+    {% if p.status == 'aguardando_aprovacao' %}
+    <form method="post" action="{{ url_for('acao_aprovar', pid=p.id) }}" class="caixa">
+      <h3>Aprovar</h3>
+      <label>Data de estreia (vazio = próximo horário livre da agenda)</label>
+      <input type="datetime-local" name="quando">
+      <button class="btn amarelo grande">✓ Aprovar e agendar no YouTube</button>
+    </form>
+
+    <form method="post" action="{{ url_for('acao_alterar', pid=p.id) }}" class="caixa">
+      <h3>Pedir alteração</h3>
+      <textarea name="pedido" rows="4" placeholder="Ex.: a thumbnail precisa de mais contraste e o texto 'SUMIU SEM RASTRO'"></textarea>
+      <label>Quem resolve</label>
+      <select name="etapa">
+        <option value="auto">Automático (a IA decide)</option>
+        {% for e in ETAPAS %}<option value="{{ e }}">{{ e }}</option>{% endfor %}
+      </select>
+      <button class="btn">✏️ Enviar para a fábrica</button>
+    </form>
+    <form method="post" action="{{ url_for('acao_descartar', pid=p.id) }}" onsubmit="return confirm('Descartar este vídeo?')">
+      <button class="btn fantasma">🗑️ Descartar</button>
+    </form>
+    {% elif p.status == 'erro' %}
+    <form method="post" action="{{ url_for('acao_retomar', pid=p.id) }}"><button class="btn amarelo">🔁 Tentar de novo</button></form>
+    {% endif %}
+
+    {% if p.get('agendamento') %}
+    <div class="caixa"><h3>No YouTube {% if p.agendamento.modo != 'real' %}(simulado){% endif %}</h3>
+      <p>🎬 <a href="{{ p.agendamento.video.url }}" target="_blank">{{ p.agendamento.video.publicar_em[:16].replace('T',' ') }}</a></p>
+      {% for s in p.agendamento.shorts %}<p>📱 <a href="{{ s.url }}" target="_blank">{{ s.publicar_em[:16].replace('T',' ') }}</a> {{ s.titulo }}</p>{% endfor %}
+    </div>
+    {% endif %}
+
+    <h3>Histórico</h3>
+    <ul class="historico">{% for h in (p.get('historico') or [])|reverse %}<li><small>{{ h.em[5:16].replace('T',' ') }}</small> {{ h.msg }}</li>{% endfor %}</ul>
+  </div>
+</div>
+{% endblock %}
