@@ -12,6 +12,15 @@ Você só abre o painel, assiste e **aprova**. Se quiser mudar algo, escreve o p
                                             privado + estreia programada
 ```
 
+## ⚡ Começo rápido
+
+1. Baixe o projeto (botão verde **Code → Download ZIP**) e extraia.
+2. Dê dois cliques em **`instalar.bat`** (Windows) ou rode `./instalar.sh` (Mac/Linux).
+3. Abra o arquivo **`.env`** e cole sua `ANTHROPIC_API_KEY`.
+4. Abra o **`config.yaml`** e troque nome, nicho, público e tom do canal.
+5. Rode `python -m fabrica verificar`: ele diz o que ainda falta.
+6. Dê dois cliques em **`iniciar.bat`** (ou `./iniciar.sh`) e o painel abre no navegador.
+
 ## O que cada agente faz
 
 | # | Agente | Como faz | Custo |

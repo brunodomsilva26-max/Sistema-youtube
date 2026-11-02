@@ -10,6 +10,7 @@
   python -m fabrica alterar <id> "o que mudar" [--etapa thumbnail]
   python -m fabrica retomar <id>
   python -m fabrica youtube-login
+  python -m fabrica verificar            # confere se está tudo configurado
 """
 from __future__ import annotations
 
@@ -52,6 +53,7 @@ def main(argv=None) -> int:
     s.add_argument("id")
 
     sub.add_parser("youtube-login")
+    sub.add_parser("verificar")
 
     a = ap.parse_args(argv)
 
@@ -94,6 +96,10 @@ def main(argv=None) -> int:
     elif a.cmd == "retomar":
         pipeline.retomar(estado.carregar(a.id))
         print("🔁 Recolocado na fila.")
+    elif a.cmd == "verificar":
+        from . import verificar
+
+        return verificar.rodar()
     elif a.cmd == "youtube-login":
         from . import youtube
 
