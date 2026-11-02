@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block conteudo %}
+<h1>Agenda <small>o que já está programado no YouTube</small></h1>
+{% if not itens %}<p class="vazio">Nada agendado ainda. Aprove um vídeo para ele aparecer aqui.</p>{% endif %}
+<table class="tabela">
+  <tr><th>Data</th><th>Tipo</th><th>Título</th><th>Visibilidade</th></tr>
+  {% for i in itens %}
+  <tr>
+    <td><b>{{ i.quando[8:10] }}/{{ i.quando[5:7] }}/{{ i.quando[:4] }}</b> {{ i.quando[11:16] }}</td>
+    <td>{{ '🎬' if i.tipo == 'Vídeo' else '📱' }} {{ i.tipo }}</td>
+    <td><a href="{{ url_for('projeto', pid=i.id) }}">{{ i.titulo }}</a></td>
+    <td><span class="tag t-agendado">🕒 Programado{% if i.modo != 'real' %} (simulado){% endif %}</span></td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block conteudo %}
+<h1>Fábrica <small>o escritório dos agentes</small> <span id="estado-geral" class="tag">…</span></h1>
+<div class="escritorio">
+  {% for chave, nome, emoji, cor in agentes %}
+  <div class="mesa" id="ag-{{ chave }}" style="--cor: {{ cor }}">
+    <div class="balao">esperando trabalho</div>
+    <div class="robo"><div class="cabeca"><i></i><i></i></div><div class="corpo">{{ emoji }}</div></div>
+    <div class="tampo"></div>
+    <div class="nome">{{ loop.index }} · {{ nome|upper }}</div>
+    <div class="barra"><span></span></div>
+  </div>
+  {% endfor %}
+</div>
+<p class="legenda-fabrica">Você só aprova. O resto é com eles. 🤖</p>
+<script>
+async function atualizar(){
+  try{
+    const r = await fetch("{{ url_for('api_fabrica') }}"); const d = await r.json();
+    let ativos = 0;
+    for (const [k, v] of Object.entries(d.agentes)){
+      const el = document.getElementById("ag-"+k); if(!el) continue;
+      el.dataset.status = v.status; el.querySelector(".balao").textContent = v.texto;
+      if (v.status === "trabalhando") ativos++;
+    }
+    const g = document.getElementById("estado-geral");
+    g.textContent = ativos ? "● FÁBRICA TRABALHANDO" : "● FÁBRICA EM ESPERA";
+    g.className = "tag " + (ativos ? "t-produzindo" : "");
+  }catch(e){}
+}
+atualizar(); setInterval(atualizar, 2000);
+</script>
+{% endblock %}
